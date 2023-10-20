@@ -1,0 +1,66 @@
+import os
+import subprocess
+
+def execute_command_in_command_prompt(command):
+    subprocess.call(command, shell=True)
+
+def execute_command_in_powershell(command):
+    subprocess.call(["powershell", "-Command", command])
+
+def net_acc_uniq_pw(number):
+    command = f"net accounts /uniquepw:{number}"
+    execute_command_in_command_prompt(command)
+
+def net_acc_max_pw_age(number):
+    command = f"net accounts /maxpwage:{number}"
+    execute_command_in_command_prompt(command)
+
+def net_acc_min_pw_age(number):
+    command = f"net accounts /minpwage:{number}"
+    execute_command_in_command_prompt(command)
+
+def enable_remote_management():
+    command = "netsh advfirewall set allprofiles settings remotemanagement enable"
+    execute_command_in_powershell(command)
+
+def set_public_fw_logging():
+    command = "netsh advfirewall set publicprofile logging filename %SystemRoot%\\System32\\logfiles\\firewall\\publicfw.log"
+    execute_command_in_powershell(command)
+
+# Command-line interface
+print("=========================================================================================")
+print("Welcome to the Windows Security Enchancement Command Execution Tool!")
+print("Choose the command set you want to execute first:")
+print("1. Password Security Commands")
+print("2. Firewall Security Commands")
+print("=========================================================================================")
+choice = input("Enter your choice (1 or 2): ")
+
+if choice == "1":
+    print("Selected: Password Security Commands")
+    print("Please enter the parameters for the following commands:")
+    unique_password = input("Enter the unique password value: ")
+    max_password_age = input("Enter the maximum password age: ")
+    min_password_age = input("Enter the minimum password age: ")
+
+    net_acc_uniq_pw(unique_password)
+    net_acc_max_pw_age(max_password_age)
+    net_acc_min_pw_age(min_password_age)
+
+    print("Password Security Commands executed successfully.")
+
+    print("Now you can execute the Firewall Security commands if needed.")
+    proceed = input("Proceed to execute the Firewall Security commands? (y/n): ")
+    if proceed.lower() == "y":
+        enable_remote_management()
+        set_public_fw_logging()
+        print("Firewall Security commands executed successfully.")
+
+elif choice == "2":
+    print("Selected: Firewall Security Commands")
+    enable_remote_management()
+    set_public_fw_logging()
+    print("Firewall Security commands executed successfully.")
+
+else:
+    print("Invalid choice. Please try again.")
